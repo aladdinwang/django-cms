@@ -48,6 +48,7 @@ from cms.utils import (copy_plugins, helpers, moderator, permissions, plugins, g
 from cms.utils.i18n import get_language_dict, get_language_list, get_language_tuple, get_language_object
 from cms.utils.page_resolver import is_valid_url
 from cms.utils.admin import jsonify_request
+from cms.utils.conf import get_cms_templates
 
 from cms.utils.permissions import has_global_page_permission
 from cms.utils.plugins import current_site
@@ -413,9 +414,10 @@ class PageAdmin(ModelAdmin):
                 form.base_fields['overwrite_url'].initial = title_obj.path
             else:
                 form.base_fields['overwrite_url'].initial = ""
+            # reload template choices
             if get_cms_setting('TEMPLATES'):
                 selected_template = get_template_from_request(request, obj)
-                template_choices = list(get_cms_setting('TEMPLATES'))
+                template_choices = list(get_cms_templates())
                 form.base_fields['template'].choices = template_choices
                 form.base_fields['template'].initial = force_unicode(selected_template)
 

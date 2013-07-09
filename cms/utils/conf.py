@@ -7,6 +7,8 @@ from cms.exceptions import CMSDeprecationWarning
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
+from configobj import ConfigObj, unrepr
+
 import os
 import warnings
 
@@ -63,6 +65,13 @@ DEFAULTS = {
     'BASE_TEMPLATE_PREFIX': None,
 }
 
+CMS_TEMPLATE_DEFAULTS = [
+    ('template_1.html', 'Template One'),
+    ('template_2.html', 'Template Two'),
+    ( 'news_template.html', 'News Template' ),
+    ( 'imageurl.html', 'Image Url' ),
+    ('photography.html', 'Photography'),
+]
 
 def get_cache_durations():
     return {
@@ -240,3 +249,23 @@ def get_cms_setting(name):
         return COMPLEX[name]()
     else:
         return getattr(settings, 'CMS_%s' % name, DEFAULTS[name])
+
+
+def init_extend_cfg( filename = None ):
+    if not filename:
+        filename = os.path.join( settings.PROJECT_PATH, settings.EXTEND_CONFIG_FILE )
+    config = ConfigObj( filename )
+    config[ 'CMS_TEMPLATES' ] = repr( CMS_TEMPLATE_DEFAULTS )
+    config.write()
+
+def get_extend_cfg( filename = None ):
+    if not filename:
+        filename = os.path.join( settings.PROJECT_PATH, settings.EXTEND_CONFIG_FILE )
+    config = ConfigObj( filename  )
+    return config
+        
+def get_cms_templates():
+    print "get cms templates"
+    config = get_extend_cfg()
+    templates = unrepr( config[ "CMS_TEMPLATES" ] )
+    return templates

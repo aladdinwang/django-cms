@@ -4,7 +4,7 @@ from cms.apphook_pool import apphook_pool
 from cms.forms.widgets import UserSelectAdminWidget
 from cms.models import (Page, PagePermission, PageUser, ACCESS_PAGE, 
     PageUserGroup, titlemodels)
-from cms.utils.conf import get_cms_setting
+from cms.utils.conf import get_cms_setting, get_cms_templates
 from cms.utils.i18n import get_language_tuple, get_language_list
 from cms.utils.mail import mail_page_user_change
 from cms.utils.page import is_valid_page_slug
@@ -85,6 +85,9 @@ class PageAddForm(forms.ModelForm):
             [name for name, value in get_cms_setting('TEMPLATES')]):
             # non-root pages default to inheriting their template
             self.fields['template'].initial = constants.TEMPLATE_INHERITANCE_MAGIC
+        template_choices = get_cms_templates()
+        self.fields['template'].choices = template_choices
+        self.base_fields['template'].choices = template_choices
         
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -167,6 +170,7 @@ class PageForm(PageAddForm):
     
     def __init__(self, *args, **kwargs):
         super(PageForm, self).__init__(*args, **kwargs)
+        
         if 'navigation_extenders' in self.fields:
             self.fields['navigation_extenders'].widget = forms.Select({}, [('', "---------")] + menu_pool.get_menus_by_attribute("cms_enabled", True))
         if 'application_urls' in self.fields:

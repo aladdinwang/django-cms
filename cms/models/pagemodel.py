@@ -5,6 +5,7 @@ from cms import constants
 from cms.utils.conf import get_cms_setting
 from django.core.exceptions import PermissionDenied
 from cms.exceptions import NoHomeFound, PublicIsUnmodifiable
+#from cms.models.fields import TemplateField
 from cms.models.managers import PageManager, PagePermissionsPermissionManager
 from cms.models.metaclasses import PageMetaClass
 from cms.models.placeholdermodel import Placeholder
@@ -13,6 +14,7 @@ from cms.publisher.errors import MpttPublisherCantPublish
 from cms.utils import i18n, page as page_utils
 from cms.utils.copy_plugins import copy_plugins_to
 from cms.utils.helpers import reversion_register
+from cms.utils.conf import get_cms_templates
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -23,6 +25,11 @@ from django.utils.translation import get_language, ugettext_lazy as _
 from menus.menu_pool import menu_pool
 from mptt.models import MPTTModel
 from os.path import join
+
+class TemplateField( models.CharField):
+    def get_choices(self, include_blank=True, blank_choice=None):
+        template_choices = get_cms_templates()
+        return template_choices
 
 
 class Page(MPTTModel):
@@ -40,7 +47,8 @@ class Page(MPTTModel):
     # Page was marked published, but some of page parents are not.
     PUBLISHER_STATE_PENDING = 4
 
-    template_choices = [(x, _(y)) for x, y in get_cms_setting('TEMPLATES')]
+    #template_choices = [(x, _(y)) for x, y in get_cms_setting('TEMPLATES')]
+    template_choices = [ ( x, _(y) ) for x, y in get_cms_templates() ]
     webapp_choices = [(x, _(y)) for x, y in get_cms_setting('WEBAPPS')]
 
     created_by = models.CharField(_("created by"), max_length=70, editable=False)
@@ -62,7 +70,7 @@ class Page(MPTTModel):
     navigation_extenders = models.CharField(_("attached menu"), max_length=80, db_index=True, blank=True, null=True)
     published = models.BooleanField(_("is published"), blank=True)
 
-    template = models.CharField(_("template"), max_length=100, choices=template_choices,
+    template = TemplateField(_("template"), max_length=500, choices=template_choices,
                                 help_text=_('The template used to render the content.'))
     exported = models.BooleanField(_('should be included in the tarball of the templates'), blank=True)
     webapp = models.CharField(_("webapp"), max_length=100, choices=webapp_choices,
@@ -109,6 +117,8 @@ class Page(MPTTModel):
             'publisher_state', 'moderator_state',
             'placeholders', 'lft', 'rght', 'tree_id',
             'parent']
+
+    
 
     def __unicode__(self):
         title = self.get_menu_title(fallback=True)

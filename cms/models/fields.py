@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from cms.forms.fields import PageSelectFormField, PlaceholderFormField
 from cms.forms.widgets import PlaceholderPluginEditorWidget
-from cms.models.pagemodel import Page
 from cms.models.placeholdermodel import Placeholder
+from cms.utils.conf import get_cms_templates
 from cms.utils.placeholder import PlaceholderNoAction, validate_placeholder_name
 from django.db import models
 from django.utils.text import capfirst
@@ -92,3 +92,8 @@ class PageField(models.ForeignKey):
         field_class = "django.db.models.fields.related.ForeignKey"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
+
+class TemplateField(models.CharField):
+    def get_choices(self, include_blank=True, blank_choice=BLANK_CHOICE_DASH):
+        template_choices = get_cms_templates()
+        return template_choices
