@@ -6,6 +6,7 @@ from django.core.urlresolvers import get_resolver, get_script_prefix, \
 from django.utils.encoding import iri_to_uri
 from moderatormodels import *
 from pagemodel import *
+from cms_templatemodel import *
 from permissionmodels import *
 from placeholdermodel import *
 from pluginmodel import *

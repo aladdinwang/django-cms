@@ -85,9 +85,11 @@ class PageAddForm(forms.ModelForm):
             [name for name, value in get_cms_setting('TEMPLATES')]):
             # non-root pages default to inheriting their template
             self.fields['template'].initial = constants.TEMPLATE_INHERITANCE_MAGIC
+        """
         template_choices = get_cms_templates()
         self.fields['template'].choices = template_choices
         self.base_fields['template'].choices = template_choices
+        """
         
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -448,3 +450,10 @@ class PageUserGroupForm(GenericCmsPermissionForm):
         save_permissions(self.cleaned_data, group)
 
         return group
+
+
+    
+class ZipUploadForm(forms.Form):
+    zipfile = forms.FileField(label = _('Zip File'), 
+                              help_text = _('The zip file should only contain images'))
+    

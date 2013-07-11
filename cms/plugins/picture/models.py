@@ -17,7 +17,7 @@ class Picture(CMSPlugin):
                      (RIGHT, _("right")),
                      (CENTER, _("center")),
                      )
-    image = FileBrowseField(_("image"), extensions = [".jpg", ".png", "jpeg"], directory="default/", blank = True, format = "Image")
+    image = FileBrowseField(_("image"), max_length = 500, extensions = [".jpg", ".png", "jpeg"], directory="default/", blank = True, format = "Image")
     url = models.CharField(_("link"), max_length=255, blank=True, null=True,
         help_text=_("If present, clicking on image will take user to link."))
     page_link = models.ForeignKey(Page, verbose_name=_("page"), null=True,

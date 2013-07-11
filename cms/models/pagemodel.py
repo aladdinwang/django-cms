@@ -10,6 +10,7 @@ from cms.models.managers import PageManager, PagePermissionsPermissionManager
 from cms.models.metaclasses import PageMetaClass
 from cms.models.placeholdermodel import Placeholder
 from cms.models.pluginmodel import CMSPlugin
+from cms.models.cms_templatemodel import CMS_Template
 from cms.publisher.errors import MpttPublisherCantPublish
 from cms.utils import i18n, page as page_utils
 from cms.utils.copy_plugins import copy_plugins_to
@@ -69,9 +70,13 @@ class Page(MPTTModel):
         "An unique identifier that is used with the page_url templatetag for linking to this page"))
     navigation_extenders = models.CharField(_("attached menu"), max_length=80, db_index=True, blank=True, null=True)
     published = models.BooleanField(_("is published"), blank=True)
-
-    template = TemplateField(_("template"), max_length=500, choices=template_choices,
+    
+    template = models.CharField(_("template"), max_length=500, choices=template_choices, 
                                 help_text=_('The template used to render the content.'))
+    """
+    template = models.ForeignKey(CMS_Template, help_text =
+                                 _('The template used to render the content.'),db_column='template', related_name='+', null = True)
+    """
     exported = models.BooleanField(_('should be included in the tarball of the templates'), blank=True)
     webapp = models.CharField(_("webapp"), max_length=100, choices=webapp_choices,
                               help_text=_('The webapp where your template will be exported to'), blank=True)
@@ -683,7 +688,6 @@ class Page(MPTTModel):
         """
         get the menu title of the page depending on the given language
         """
-        #m
         menu_title = self.get_title_obj_attribute("title", 'zh-cn', fallback, version_id, force_reload)
 
         if not menu_title:
