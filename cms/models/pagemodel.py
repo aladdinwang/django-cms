@@ -70,13 +70,13 @@ class Page(MPTTModel):
         "An unique identifier that is used with the page_url templatetag for linking to this page"))
     navigation_extenders = models.CharField(_("attached menu"), max_length=80, db_index=True, blank=True, null=True)
     published = models.BooleanField(_("is published"), blank=True)
-    
+    """
     template = models.CharField(_("template"), max_length=500, choices=template_choices, 
                                 help_text=_('The template used to render the content.'))
     """
-    template = models.ForeignKey(CMS_Template, help_text =
+    template = models.ForeignKey(CMS_Template, verbose_name=_('template'), on_delete=models.SET_NULL, help_text =
                                  _('The template used to render the content.'),db_column='template', related_name='+', null = True)
-    """
+    
     exported = models.BooleanField(_('should be included in the tarball of the templates'), blank=True)
     webapp = models.CharField(_("webapp"), max_length=100, choices=webapp_choices,
                               help_text=_('The webapp where your template will be exported to'), blank=True)
@@ -770,7 +770,7 @@ class Page(MPTTModel):
         template = None
         if self.template:
             if self.template != constants.TEMPLATE_INHERITANCE_MAGIC:
-                template = self.template
+                template =self.template
             else:
                 try:
                     template = self.get_ancestors(ascending=True).exclude(
@@ -780,7 +780,7 @@ class Page(MPTTModel):
         if not template:
             template = get_cms_setting('TEMPLATES')[0][0]
         self._template_cache = template
-        return template
+        return str(template)
 
     def get_template_name(self):
         """

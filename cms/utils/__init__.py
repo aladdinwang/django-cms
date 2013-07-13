@@ -22,6 +22,9 @@ def get_template_from_request(request, obj=None, no_current_page=False):
     template.
     """
     template = None
+    if obj:
+        print type(obj)
+        return obj.get_template()
     if len(get_cms_templates()) == 1:
         return get_cms_templates()[0][0]
     if "template" in request.REQUEST:
