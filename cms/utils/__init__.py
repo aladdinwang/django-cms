@@ -22,15 +22,16 @@ def get_template_from_request(request, obj=None, no_current_page=False):
     template.
     """
     template = None
+    # modified by @wej
     if obj:
-        print type(obj)
         return obj.get_template()
-    if len(get_cms_templates()) == 1:
-        return get_cms_templates()[0][0]
     if "template" in request.REQUEST:
+        # modified by @wej
         template = request.REQUEST['template']
     if not template and obj is not None:
         template = obj.get_template()
+    if len(get_cms_templates()) == 1:
+        return get_cms_templates()[0][0]
     if not template and not no_current_page and hasattr(request, "current_page"):
         current_page = request.current_page
         if hasattr(current_page, "get_template"):

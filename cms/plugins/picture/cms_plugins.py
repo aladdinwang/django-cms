@@ -43,8 +43,9 @@ class PicturePlugin(CMSPluginBase):
             onclick_action = js_template.render(Context({ 'target_url': edit_url, 'placeholder':placeholder }))
             link = 'javascript:void(0)'
             longdesc = alt
-            
+           
         # if image is none
+        """"
         if context.has_key('default') or (not instance.image):
             page_id = instance.placeholder.page.pk
             image_path = settings.DEFAULT_IMAGE_PATH \
@@ -55,7 +56,7 @@ class PicturePlugin(CMSPluginBase):
             else:
                 # ToDo: @wej pengding Thu Jun 20 20:19:20 CST 2013
                 instance.image = get_cms_setting('PAGE_MEDIA_PATH') + 'default/' + 'all.png'
-        
+        """
         context.update({
             'picture': instance,
             'link': link,

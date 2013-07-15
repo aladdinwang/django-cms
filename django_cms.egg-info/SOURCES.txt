@@ -24,6 +24,7 @@ cms/urls.py
 cms/views.py
 cms/admin/__init__.py
 cms/admin/change_list.py
+cms/admin/cms_templateadmin.py
 cms/admin/forms.py
 cms/admin/models.py
 cms/admin/pageadmin.py
@@ -32,6 +33,7 @@ cms/admin/permissionadmin.py
 cms/admin/placeholderadmin.py
 cms/admin/useradmin.py
 cms/admin/views.py
+cms/admin/zipuploadadmin.py
 cms/admin/dialog/__init__.py
 cms/admin/dialog/forms.py
 cms/admin/dialog/views.py
@@ -287,8 +289,15 @@ cms/migrations/0042_auto__add_field_cmsplugin_plugin_tips.py
 cms/migrations/0043_auto__add_field_page_exported.py
 cms/migrations/0044_auto__del_field_cmsplugin_plugin_tips.py
 cms/migrations/0045_auto__add_field_page_webapp.py
+cms/migrations/0046_auto__chg_field_page_webapp__chg_field_page_template.py
+cms/migrations/0047_add_model_CMS_Template.py
+cms/migrations/0048_auto__chg_field_page_template__add_index_page_template.py
+cms/migrations/0049_auto__del_field_page_template.py
+cms/migrations/0050_auto__add_field_page_template.py
+cms/migrations/0050_auto__add_zipupload__add_field_cms_template_name.py
 cms/migrations/__init__.py
 cms/models/__init__.py
+cms/models/cms_templatemodel.py
 cms/models/fakemodel.py
 cms/models/fields.py
 cms/models/managers.py

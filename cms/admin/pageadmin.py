@@ -308,16 +308,24 @@ class PageAdmin(ModelAdmin):
                     asy_content =asy_template.render(Context({'tips': plugin_tips, }))
                     instance = picture.models.Picture( language=language, plugin_type=plugin_type, width=width,
                                                        height=height, placeholder=placeholder)
+                    
+                    #instance.save()
+                    image_path = os.path.join(settings.MEDIA_ROOT,
+                                               settings.DEFAULT_IMAGE_PATH)
+                    full_path = os.path.join(image_path, 'default' + '.png')
+                    print image_path
+                    if not os.path.exists(full_path):
+                        print image_path
+                        if not os.path.exists(image_path):
+                            os.makedirs(image_path)
+                        from subprocess import Popen, PIPE
+                        # compose file name
+                        subp = Popen(['asy', '-o', os.path.join(image_path, 'default') ], stdin=PIPE)
+                        subp.communicate(asy_content)[0]
+                        subp.wait()
+                    
+                    instance.image = os.path.join(settings.DEFAULT_IMAGE_PATH, 'default' + '.png')
                     instance.save()
-                    image_path = settings.MEDIA_ROOT + '/' \
-                        + settings.DEFAULT_IMAGE_PATH + '/' + str(obj.pk)
-                    if not os.path.exists(image_path):
-                        os.makedirs(image_path)
-                    from subprocess import Popen, PIPE
-                    # compose file name
-                    subp = Popen(['asy', '-o', image_path + '/' + str(instance.pk)], stdin=PIPE)
-                    subp.communicate(asy_content)[0]
-                    subp.wait()
  
         if target is not None and position is not None:
             try:
@@ -418,12 +426,15 @@ class PageAdmin(ModelAdmin):
             else:
                 form.base_fields['overwrite_url'].initial = ""
             # reload template choices
+            
+            selected_template = get_template_from_request(request, obj)
+            """
             if get_cms_setting('TEMPLATES'):
                 selected_template = get_template_from_request(request, obj)
                 template_choices = list(get_cms_templates())
                 form.base_fields['template'].choices = template_choices
                 form.base_fields['template'].initial = force_unicode(selected_template)
-
+            """
 
             placeholders = self.get_fieldset_placeholders(selected_template, take_node=True)
             placeholder_book = {}
@@ -492,17 +503,24 @@ class PageAdmin(ModelAdmin):
                             asy_template = get_template(settings.DEFAULT_IMAGE_ASY_FILE)
                             asy_content = asy_template.render(Context({'tips': plugin_tips, }))
                             instance = picture.models.Picture(language=language, plugin_type=plugin_type,width=width, height=height, placeholder=placeholder)
-                            instance.save()
+                            #instance.save()
+                            # modify image_path to default root
                             image_path = settings.MEDIA_ROOT + '/' \
-                                + settings.DEFAULT_IMAGE_PATH + '/' + str(obj.pk)
+                                + settings.DEFAULT_IMAGE_PATH
                             if not os.path.exists(image_path):
                                 os.makedirs(image_path)
-                            from subprocess import Popen, PIPE
-                            # compose file name
-                            subp = Popen(['asy', '-o', image_path + '/' + str(instance.pk)], stdin=PIPE)
-                            subp.communicate(input=u'' + asy_content)[0]
-                            subp.stdin.flush()
-                            subp.wait()
+                            full_path = os.path.join(image_path, 'default' + '.png')
+                            plugin_tips = ('-').join(plugin_tips.split(' '))
+                            if not os.path.exists(full_path):
+                                from subprocess import Popen, PIPE
+                                # compose file name
+                                subp = Popen(['asy', '-o', image_path + '/' + 'default' ], stdin=PIPE)
+                                subp.communicate(input=u'' + asy_content)[0]
+                                subp.stdin.flush()
+                                subp.wait()
+                            
+                            instace.image = os.path.join(settings.DEFAULT_IMAGE_PATH, 'default' + '.png')
+                            instance.save()
 
 
  
@@ -555,6 +573,10 @@ class PageAdmin(ModelAdmin):
                 form.base_fields[name].initial = u''
             form.base_fields['parent'].initial = request.GET.get('target', None)
             form.base_fields['site'].initial = request.session.get('cms_admin_site', None)
+            
+            if 'template' in request.REQUEST:
+                template = request.REQUEST['template']
+                form.base_fields['template'].initial = template
             #form.base_fields['template'].initial = get_cms_setting('TEMPLATES')[0][0]
 
         return form

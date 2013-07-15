@@ -14,7 +14,7 @@ class CMS_Template(models.Model):
                             help_text=_('The name used to be searched in order to find the template.'),
                             db_index=True)
     cms_template = FileBrowseField(_('CMS Template'), max_length = 500,
-                                   extensions = [".html",], directory = 'templates', null = True)
+                                   extensions = [".html",], directory = 'templates/', null = True)
     def __unicode__(self):
         return unicode(self.name)
 
