@@ -285,6 +285,9 @@ class PageAdmin(ModelAdmin):
         else:
             # here add our logic to process plugins @wej
             template = obj.template
+            
+            if not isinstance(template, str):
+                template = str(template)
             placeholder_nodes = self.get_fieldset_placeholders(template, take_node=True)
             
             for placeholder_node in placeholder_nodes:

@@ -121,6 +121,8 @@ def _scan_placeholders(nodelist, current_block=None, ignore_blocks=None, take_no
     return placeholders
 
 def get_placeholders(template, take_node=False):
+    if not isinstance(template, str):
+        template = str(template)
     compiled_template = get_template(template)
     placeholders = _scan_placeholders(compiled_template.nodelist, take_node = take_node)
     clean_placeholders = []
